@@ -1,0 +1,26 @@
+# Node.js dependencies
+node_modules/
+
+# Symfony cache and logs
+var/cache/
+var/log/
+var/sessions/
+
+# Environment files
+.env.local
+.env.*
+.env
+
+# Composer dependencies
+vendor/
+
+# Docker-specific files
+docker/php/php.ini
+docker/nginx/nginx.conf
+docker-compose.override.yaml
+docker-compose.yaml
+.dockerignore
+
+# IDE configurations
+.idea/
+*.iml
