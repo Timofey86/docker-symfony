@@ -9,7 +9,7 @@ var/sessions/
 # Environment files
 .env.local
 .env.*
-.env
+app/.env
 
 # Composer dependencies
 vendor/
