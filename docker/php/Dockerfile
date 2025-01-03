@@ -24,4 +24,13 @@ RUN echo "xdebug.mode=debug" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.
 # Установка Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+ARG USER_ID=1000
+ARG GROUP_ID=1000
+
+RUN groupadd -g ${GROUP_ID} appgroup && \
+    useradd -l -u ${USER_ID} -g appgroup appuser && \
+    install -d -m 0755 -o appuser -g appgroup /home/appuser
+
+USER appuser
+
 WORKDIR /var/www/html

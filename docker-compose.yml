@@ -4,11 +4,16 @@ services:
   app:
     build:
       context: ./docker/php
+      args:
+        USER_ID: ${USER_ID}
+        GROUP_ID: ${GROUP_ID}
 #      args:
 #        - INSTALL_XDEBUG=${INSTALL_XDEBUG}
     container_name: symfony_app
     volumes:
       - ./app:/var/www/html
+      - ./var/log:/var/www/html/var/log
+      - ./var/cache:/var/www/html/var/cache
     extra_hosts:
       - "host.docker.internal:host-gateway"
     environment:
