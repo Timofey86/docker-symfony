@@ -2,23 +2,23 @@
 
 namespace App\Users\Domain\Entity;
 
+use App\Shared\Domain\Security\AuthUserInterface;
 use App\Shared\Domain\Service\UlidService;
+use App\Users\Domain\Service\UserPasswordHasherInterface;
 
-class User
+class User implements AuthUserInterface
 {
     private string $ulid;
     private string $email;
-    private string $password;
+    private ?string $password = null;
 
     /**
      * @param string $email
-     * @param string $password
      */
-    public function __construct(string $email, string $password)
+    public function __construct(string $email)
     {
         $this->ulid = UlidService::generate();
         $this->email = $email;
-        $this->password = $password;
     }
 
     public function getUlid(): string
@@ -31,9 +31,32 @@ class User
         return $this->email;
     }
 
-    public function getPassword(): string
+    public function getPassword(): ?string
     {
         return $this->password;
     }
 
+    public function getRoles(): array
+    {
+        return ['ROLE_USER'];
+    }
+
+    public function eraseCredentials(): void
+    {
+        // TODO: Implement eraseCredentials() method.
+    }
+
+    public function setPassword(?string $password, UserPasswordHasherInterface $passwordHasher): void
+    {
+        if (is_null($password)) {
+            $this->password = null;
+        }
+
+        $this->password = $passwordHasher->hash($this, $password);;
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return $this->email;
+    }
 }

@@ -1,0 +1,47 @@
+security:
+    # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
+    password_hashers:
+        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+    # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
+    providers:
+        app_user_provider:
+            entity:
+                class: App\Users\Domain\Entity\User
+                property: email
+    firewalls:
+        login:
+            pattern: ^/api/auth/token/login
+            stateless: true
+            provider: app_user_provider
+            json_login:
+                username_path: email
+                check_path: /api/auth/token/login #login_check
+                success_handler: lexik_jwt_authentication.handler.authentication_success
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+            jwt: ~
+             # or, you may use the `api_refresh_token` route name
+                    # or if you have more than one user provider
+                    # provider: user_provider_name
+        api:
+            pattern: ^/api/auth/token/refresh
+            stateless: true
+            provider: app_user_provider
+            jwt: ~
+            refresh_jwt:
+                check_path: /api/auth/token/refresh
+            entry_point: jwt
+
+    access_control:
+        - { path: ^/api/auth/token/login, roles: PUBLIC_ACCESS }
+        - { path: ^/api/auth/token/refresh, roles: PUBLIC_ACCESS }
+        - { path: ^/api/users/me,       roles: IS_AUTHENTICATED_FULLY }
+
+when@test:
+    security:
+        password_hashers:
+            # By default, password hashers are resource intensive and take time. This is
+            # important to generate secure password hashes. In tests however, secure hashes
+            # are not important, waste resources and increase test times. The following
+            # reduces the work factor to the lowest possible values.
+            Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
+                algorithm: plaintext
